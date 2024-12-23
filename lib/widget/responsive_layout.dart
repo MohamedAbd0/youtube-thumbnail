@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'footer.dart';
+
 class ResponsiveLayout extends StatelessWidget {
   final Widget mobileLayout;
   final Widget desktopLayout;
@@ -24,24 +26,32 @@ class ResponsiveLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 1680, // Example screen size for 22 inches
-          maxHeight: double.infinity,
+    return Column(
+      children: [
+        Expanded(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 1680, // Example screen size for 22 inches
+                maxHeight: double.infinity,
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  if (isMobile(context)) {
+                    return mobileLayout;
+                  } else if (isTablet(context)) {
+                    return tabletLayout;
+                  } else {
+                    return desktopLayout;
+                  }
+                },
+              ),
+            ),
+          ),
         ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            if (isMobile(context)) {
-              return mobileLayout;
-            } else if (isTablet(context)) {
-              return tabletLayout;
-            } else {
-              return desktopLayout;
-            }
-          },
-        ),
-      ),
+
+        const Footer(), // Footer at the bottom
+      ],
     );
   }
 }

@@ -47,13 +47,9 @@ class MyApp extends StatelessWidget {
             return fontSize.toDouble() * (screenWidth / uiSizeWidth);
           },
           builder: (context, child) {
-            return MaterialApp(
+            return const MaterialApp(
               title: 'Youtube Thumbnails',
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                useMaterial3: true,
-              ),
-              home: const ResponsiveLayout(
+              home: ResponsiveLayout(
                 mobileLayout: HomeScreen(),
                 tabletLayout: HomeScreen(),
                 desktopLayout: HomeScreen(),
