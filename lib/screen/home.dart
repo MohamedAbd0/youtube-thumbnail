@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_thumbnail/export.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,41 +11,63 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+class NameID {
+  final String name;
+  final dynamic id;
+
+  NameID({required this.name, required this.id});
+}
+
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  String? selectedDomainValue = "img.youtube.com";
-  final List<String> itemsDomains = [
-    'img.youtube.com',
-    'i.ytimg.com',
-    'i3.ytimg.com',
+  late NameID selectedDomain;
+  late NameID selectedQuality;
+  late NameID selectedFormat;
+
+  final List<NameID> domainOptions = [
+    NameID(name: "img.youtube.com", id: ThumbnailDomain.imgYouTubeCom),
+    NameID(name: "i.ytimg.com", id: ThumbnailDomain.iYtImgCom),
+    NameID(name: "i3.ytimg.com", id: ThumbnailDomain.i3YtImgCom),
   ];
 
-  late NameID selectedThumbnailsValue;
+  final List<NameID> qualityOptions = [
+    NameID(name: "Full-size Image", id: ThumbnailQuality.fullSize),
+    NameID(name: "Thumbnail Frame 1", id: ThumbnailQuality.frame1),
+    NameID(name: "Thumbnail Frame 2", id: ThumbnailQuality.frame2),
+    NameID(name: "Thumbnail Frame 3", id: ThumbnailQuality.frame3),
+    NameID(name: "Default Thumbnail", id: ThumbnailQuality.defaultThumbnail),
+    NameID(name: "High Quality", id: ThumbnailQuality.highQuality),
+    NameID(name: "Medium Quality", id: ThumbnailQuality.mediumQuality),
+    NameID(
+        name: "Standard Definition", id: ThumbnailQuality.standardDefinition),
+    NameID(name: "Maximum Resolution", id: ThumbnailQuality.maximumResolution),
+    NameID(
+        name: "Alternate High Quality 2",
+        id: ThumbnailQuality.alternateHighQuality2),
+    NameID(
+        name: "Alternate High Quality 3",
+        id: ThumbnailQuality.alternateHighQuality3),
+    NameID(
+        name: "Alternate Maximum Resolution 2",
+        id: ThumbnailQuality.alternateMaximumResolution2),
+  ];
 
-  List<NameID> thumbnails = [
-    NameID(name: "Full-size Image", id: "0.jpg"),
-    NameID(name: "Thumbnail Frame 1", id: "1.jpg"),
-    NameID(name: "Thumbnail Frame 2", id: "2.jpg"),
-    NameID(name: "Thumbnail Frame 3", id: "3.jpg"),
-    NameID(name: "Default Thumbnail", id: "default.jpg"),
-    NameID(name: "High Quality Thumbnail", id: "hqdefault.jpg"),
-    NameID(name: "Medium Quality Thumbnail", id: "mqdefault.jpg"),
-    NameID(name: "Standard Definition Thumbnail", id: "sddefault.jpg"),
-    NameID(name: "Maximum Resolution Thumbnail", id: "maxresdefault.jpg"),
-    NameID(name: "Alternate High Quality Thumbnail 2", id: "hq2.jpg"),
-    NameID(name: "Alternate High Quality Thumbnail 3", id: "hq3.jpg"),
-    NameID(name: "Alternate Maximum Resolution Thumbnail 2", id: "maxres2.jpg"),
+  final List<NameID> formatOptions = [
+    NameID(name: "JPG", id: ThumbnailFormat.jpg),
+    NameID(name: "WEBP", id: ThumbnailFormat.webp),
   ];
 
   String? thumbnailUrl;
-  String? videoID;
 
   @override
   void initState() {
     super.initState();
-    selectedThumbnailsValue = thumbnails[0];
+
+    selectedDomain = domainOptions.first;
+    selectedQuality = qualityOptions.first;
+    selectedFormat = formatOptions.first;
   }
 
   @override
@@ -125,7 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 TextFormField(
                   validator: (value) {
-                    if (isValidYouTubeUrl(value ?? "")) {
+                    if (YouTubeThumbnailHelper.extractVideoId(value ?? "") !=
+                        null) {
                       return null;
                     } else {
                       return 'Invalid YouTube Video URL';
@@ -139,21 +163,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.green, // Set the background color here
-                          foregroundColor:
-                              Colors.white, // Set the text color here
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12), // Optional padding
+                              horizontal: 20, vertical: 12),
                           shape: RoundedRectangleBorder(
-                            // Optional: to customize the button shape
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
                         onPressed: () async {
                           if (_formKey.currentState?.validate() ?? false) {
-                            videoID =
-                                extractVideoId(_textEditingController.text);
                             generateThumbnailUrl();
                           }
                         },
@@ -168,53 +187,71 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: selectedDomainValue,
+                      child: DropdownButtonFormField<NameID>(
+                        isExpanded: true,
+                        value: selectedDomain,
                         decoration: const InputDecoration(
-                          labelText: 'Select Domain', // Label like a TextField
-                          border: OutlineInputBorder(), // Add a border
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          labelText: 'Select Domain',
+                          border: OutlineInputBorder(),
                         ),
-                        items: itemsDomains.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
+                        items: domainOptions.map((domain) {
+                          return DropdownMenuItem(
+                            value: domain,
+                            child: Text(domain.name),
                           );
                         }).toList(),
-                        onChanged: (String? newValue) {
+                        onChanged: (newValue) {
                           setState(() {
-                            selectedDomainValue = newValue;
+                            selectedDomain = newValue!;
                           });
                           generateThumbnailUrl();
                         },
-                        isExpanded: true, // Makes the dropdown full width
                       ),
                     ),
-                    const SizedBox(width: 20), // Space between dropdowns
+                    SizedBox(width: 20.w),
                     Expanded(
                       child: DropdownButtonFormField<NameID>(
-                        value: selectedThumbnailsValue,
+                        isExpanded: true,
+                        value: selectedQuality,
                         decoration: const InputDecoration(
                           labelText: 'Select Resolution',
-                          border: OutlineInputBorder(), // Add a border
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          border: OutlineInputBorder(),
                         ),
-                        items: thumbnails.map((NameID value) {
-                          return DropdownMenuItem<NameID>(
-                            value: value,
-                            child: Text(value.name),
+                        items: qualityOptions.map((quality) {
+                          return DropdownMenuItem(
+                            value: quality,
+                            child: Text(quality.name),
                           );
                         }).toList(),
-                        onChanged: (NameID? newValue) {
+                        onChanged: (newValue) {
                           setState(() {
-                            selectedThumbnailsValue =
-                                newValue ?? thumbnails.first;
+                            selectedQuality = newValue!;
                           });
                           generateThumbnailUrl();
                         },
-                        isExpanded: true, // Makes the dropdown full width
+                      ),
+                    ),
+                    SizedBox(width: 20.w),
+                    Expanded(
+                      child: DropdownButtonFormField<NameID>(
+                        isExpanded: true,
+                        value: selectedFormat,
+                        decoration: const InputDecoration(
+                          labelText: 'Select Format',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: formatOptions.map((format) {
+                          return DropdownMenuItem(
+                            value: format,
+                            child: Text(format.name),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedFormat = newValue!;
+                          });
+                          generateThumbnailUrl();
+                        },
                       ),
                     ),
                   ],
@@ -239,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     errorBuilder: (context, error, stackTrace) {
                       return const Icon(
                         Icons.error,
-                      ); // Placeholder for error case
+                      );
                     },
                   ),
                   const SizedBox(height: 30),
@@ -271,7 +308,44 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                ]
+                ],
+                SizedBox(height: 40.h),
+                const Divider(),
+                SizedBox(height: 40.h),
+                const Text(
+                  "Resources",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    const link =
+                        "https://gist.github.com/MohamedAbd0/a7198b9f44ff13ea2bcbb27a8a03682f";
+
+                    _launchURL(link);
+                  },
+                  child: const Text(
+                    "GitHub Source Code",
+                    style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    const link =
+                        "https://medium.com/@mohamed-abdo/how-to-retrieve-youtube-video-thumbnails-using-youtube-api-and-direct-urls-adc8114ff318";
+
+                    _launchURL(link);
+                  },
+                  child: const Text(
+                    "Read the Article",
+                    style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline),
+                  ),
+                ),
               ],
             ),
           ),
@@ -280,103 +354,26 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _launchURL(String url) async {
+    // Open the URL in the browser
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      debugPrint("Could not launch $url");
+    }
+  }
+
   void generateThumbnailUrl() {
-    if (selectedDomainValue == null || videoID == null) {
-      // Show an error message if either domain or resolution is not selected
+    if (_textEditingController.text.trim().isEmpty) {
       return;
     }
-
-    // Construct the URL based on the selected domain and resolution
     setState(() {
-      thumbnailUrl =
-          'https://$selectedDomainValue/vi/$videoID/${selectedThumbnailsValue.id}';
+      thumbnailUrl = YouTubeThumbnailHelper.generateThumbnailUrl(
+        videoUrl: _textEditingController.text.trim(),
+        domain: selectedDomain.id,
+        quality: selectedQuality.id,
+        format: selectedFormat.id,
+      );
     });
   }
-
-  bool isValidYouTubeUrl(String url) {
-    late final Uri uri;
-    try {
-      uri = Uri.parse(url);
-    } catch (e) {
-      return false;
-    }
-
-    if (!['https', 'http'].contains(uri.scheme)) {
-      return false;
-    }
-    // youtube.com/watch?v=xxxxxxxxxxx
-    if (['youtube.com', 'www.youtube.com', 'm.youtube.com']
-            .contains(uri.host) &&
-        uri.pathSegments.isNotEmpty &&
-        (uri.pathSegments.first == 'watch' ||
-            uri.pathSegments.first == 'live')) {
-      return true;
-    }
-    // youtu.be/xxxxxxxxxxx
-    if (uri.host == 'youtu.be' && uri.pathSegments.isNotEmpty) {
-      return true;
-    }
-    // www.youtube.com/shorts/xxxxxxxxxxx
-    // www.youtube.com/embed/xxxxxxxxxxx
-    if (uri.host == 'www.youtube.com' &&
-        uri.pathSegments.length == 2 &&
-        ['shorts', 'embed'].contains(uri.pathSegments.first)) {
-      return true;
-    }
-    return false;
-  }
-
-  String? extractVideoId(String url) {
-    if (url.contains(' ')) {
-      return null;
-    }
-
-    late final Uri uri;
-    try {
-      uri = Uri.parse(url);
-    } catch (e) {
-      return null;
-    }
-
-    if (!['https', 'http'].contains(uri.scheme)) {
-      return null;
-    }
-
-    // youtube.com/watch?v=xxxxxxxxxxx
-    if (['youtube.com', 'www.youtube.com', 'm.youtube.com']
-            .contains(uri.host) &&
-        uri.pathSegments.isNotEmpty &&
-        (uri.pathSegments.first == 'watch' ||
-            uri.pathSegments.first == 'live') &&
-        uri.queryParameters.containsKey('v')) {
-      final videoId = uri.queryParameters['v']!;
-      return _isValidId(videoId) ? videoId : null;
-    }
-
-    // youtu.be/xxxxxxxxxxx
-    if (uri.host == 'youtu.be' && uri.pathSegments.isNotEmpty) {
-      final videoId = uri.pathSegments.first;
-      return _isValidId(videoId) ? videoId : null;
-    }
-
-    // www.youtube.com/shorts/xxxxxxxxxxx
-    // youtube.com/shorts/xxxxxxxxxxx
-    if (uri.host == 'www.youtube.com' || uri.host == 'youtube.com') {
-      final pathSegments = uri.pathSegments;
-      if (pathSegments.contains('shorts') && pathSegments.length >= 2) {
-        final videoId = pathSegments.last;
-        return _isValidId(videoId) ? videoId : null;
-      }
-    }
-
-    return null;
-  }
-
-  bool _isValidId(String id) => RegExp(r'^[_\-a-zA-Z0-9]{11}$').hasMatch(id);
-}
-
-class NameID {
-  final String name;
-  final String id;
-  NameID({required this.name, required this.id});
 }
