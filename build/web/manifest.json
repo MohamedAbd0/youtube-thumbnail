@@ -1,11 +1,11 @@
 {
-    "name": "youtube_thumbnail",
-    "short_name": "youtube_thumbnail",
+    "name": "YouTube Thumbnail Generator",
+    "short_name": "YT Thumbnail",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#ffffff",
-    "description": "A new Flutter project.",
+    "background_color": "#F8FAFC",
+    "theme_color": "#3B82F6",
+    "description": "Extract high-quality thumbnails from any YouTube video instantly",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -61,6 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? thumbnailUrl;
 
+  final List<String> urlExamples = [
+    'https://www.youtube.com/watch?v=VIDEO_ID',
+    'https://youtu.be/VIDEO_ID',
+    'https://www.youtube.com/embed/VIDEO_ID',
+    'https://www.youtube.com/watch?v=VIDEO_ID&t=60s',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -73,11 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8FAFC),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.15,
-          vertical: MediaQuery.of(context).size.width * 0.03,
+          horizontal: ResponsiveLayout.isMobile(context) 
+              ? 16.w 
+              : MediaQuery.of(context).size.width * 0.1,
+          vertical: ResponsiveLayout.isMobile(context) 
+              ? 20.h 
+              : MediaQuery.of(context).size.width * 0.03,
         ),
         child: Form(
           key: _formKey,
@@ -85,227 +96,477 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Center(
             child: Column(
               children: [
-                const Text(
-                  "To Easily Retrieve YouTube Video Thumbnail Images",
-                  style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  margin: EdgeInsets.only(bottom: 40.h),
+                  child: Column(
+                    children: [
+                      Text(
+                        "YouTube Thumbnail Generator",
+                        style: TextStyle(
+                          fontSize: ResponsiveLayout.isMobile(context) ? 28.sp : 42.sp,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF1E293B),
+                          height: 1.2,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        "Extract high-quality thumbnails from any YouTube video instantly",
+                        style: TextStyle(
+                          fontSize: ResponsiveLayout.isMobile(context) ? 16.sp : 18.sp,
+                          color: const Color(0xFF64748B),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: ResponsiveLayout.isMobile(context) ? 50.w : 200.w,
-                      child: Assets.images.imLogo.image(),
-                    ),
-                    Expanded(
-                      child: RichText(
-                        text: const TextSpan(
-                          style: TextStyle(color: Colors.black, fontSize: 16),
+                // Features section
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  margin: const EdgeInsets.only(bottom: 32),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (!ResponsiveLayout.isMobile(context))
+                        Container(
+                          width: 120,
+                          height: 120,
+                          margin: const EdgeInsets.only(right: 24),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.image,
+                            size: 60,
+                            color: Colors.white,
+                          ),
+                        ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextSpan(
-                              text:
-                                  'You can use the following formats for YouTube video links to retrieve the thumbnail:\n\n',
-                              style: TextStyle(fontSize: 18),
+                            Text(
+                              "Supported URL Formats",
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF1E293B),
+                              ),
                             ),
-                            TextSpan(
-                              text: '- ',
-                            ),
-                            TextSpan(
-                              text:
-                                  'https://www.youtube.com/watch?v=VIDEO_ID\n',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            TextSpan(
-                              text: '- ',
-                            ),
-                            TextSpan(
-                              text: 'https://youtu.be/VIDEO_ID\n',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            TextSpan(
-                              text: '- ',
-                            ),
-                            TextSpan(
-                              text: 'https://www.youtube.com/embed/VIDEO_ID\n',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            TextSpan(
-                              text: '- ',
-                            ),
-                            TextSpan(
-                              text:
-                                  'https://www.youtube.com/watch?v=VIDEO_ID&t=60s',
-                              style: TextStyle(color: Colors.blue),
-                            ),
+                            SizedBox(height: 12.h),
+                            ...urlExamples.map((example) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    margin: const EdgeInsets.only(top: 8, right: 12),
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF3B82F6),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      example,
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: const Color(0xFF3B82F6),
+                                        fontFamily: 'monospace',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )).toList(),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                TextFormField(
-                  validator: (value) {
-                    if (YouTubeThumbnailHelper.extractVideoId(value ?? "") !=
-                        null) {
-                      return null;
-                    } else {
-                      return 'Invalid YouTube Video URL';
-                    }
-                  },
-                  controller: _textEditingController,
-                  decoration: InputDecoration(
-                    labelText: 'Enter YouTube Video URL',
-                    border: const OutlineInputBorder(),
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 15,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    validator: (value) {
+                      if (YouTubeThumbnailHelper.extractVideoId(value ?? "") !=
+                          null) {
+                        return null;
+                      } else {
+                        return 'Invalid YouTube Video URL';
+                      }
+                    },
+                    controller: _textEditingController,
+                    decoration: InputDecoration(
+                      labelText: 'Enter YouTube Video URL',
+                      labelStyle: TextStyle(
+                        color: const Color(0xFF64748B),
+                        fontSize: 16.sp,
+                      ),
+                      hintText: 'https://www.youtube.com/watch?v=...',
+                      hintStyle: TextStyle(
+                        color: const Color(0xFF94A3B8),
+                        fontSize: 14.sp,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFFEF4444)),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(20),
+                      suffixIcon: Container(
+                        margin: const EdgeInsets.all(8),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF10B981),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
                           ),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            generateThumbnailUrl();
-                          }
-                        },
-                        child: const Text(
-                          'Generate',
+                          onPressed: () async {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              generateThumbnailUrl();
+                            }
+                          },
+                          child: Text(
+                            'Generate',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<NameID>(
-                        isExpanded: true,
-                        value: selectedDomain,
-                        decoration: const InputDecoration(
-                          labelText: 'Select Domain',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: domainOptions.map((domain) {
-                          return DropdownMenuItem(
-                            value: domain,
-                            child: Text(domain.name),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedDomain = newValue!;
-                          });
-                          generateThumbnailUrl();
-                        },
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 15,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                    SizedBox(width: 20.w),
-                    Expanded(
-                      child: DropdownButtonFormField<NameID>(
-                        isExpanded: true,
-                        value: selectedQuality,
-                        decoration: const InputDecoration(
-                          labelText: 'Select Resolution',
-                          border: OutlineInputBorder(),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Customize Your Thumbnail",
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1E293B),
                         ),
-                        items: qualityOptions.map((quality) {
-                          return DropdownMenuItem(
-                            value: quality,
-                            child: Text(quality.name),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedQuality = newValue!;
-                          });
-                          generateThumbnailUrl();
-                        },
                       ),
-                    ),
-                    SizedBox(width: 20.w),
-                    Expanded(
-                      child: DropdownButtonFormField<NameID>(
-                        isExpanded: true,
-                        value: selectedFormat,
-                        decoration: const InputDecoration(
-                          labelText: 'Select Format',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: formatOptions.map((format) {
-                          return DropdownMenuItem(
-                            value: format,
-                            child: Text(format.name),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedFormat = newValue!;
-                          });
-                          generateThumbnailUrl();
-                        },
-                      ),
-                    ),
-                  ],
+                      SizedBox(height: 16.h),
+                      ResponsiveLayout.isMobile(context)
+                          ? Column(
+                              children: [
+                                _buildDropdown(
+                                  "Domain",
+                                  selectedDomain,
+                                  domainOptions,
+                                  (newValue) {
+                                    setState(() {
+                                      selectedDomain = newValue!;
+                                    });
+                                    generateThumbnailUrl();
+                                  },
+                                ),
+                                SizedBox(height: 16.h),
+                                _buildDropdown(
+                                  "Resolution",
+                                  selectedQuality,
+                                  qualityOptions,
+                                  (newValue) {
+                                    setState(() {
+                                      selectedQuality = newValue!;
+                                    });
+                                    generateThumbnailUrl();
+                                  },
+                                ),
+                                SizedBox(height: 16.h),
+                                _buildDropdown(
+                                  "Format",
+                                  selectedFormat,
+                                  formatOptions,
+                                  (newValue) {
+                                    setState(() {
+                                      selectedFormat = newValue!;
+                                    });
+                                    generateThumbnailUrl();
+                                  },
+                                ),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDropdown(
+                                    "Domain",
+                                    selectedDomain,
+                                    domainOptions,
+                                    (newValue) {
+                                      setState(() {
+                                        selectedDomain = newValue!;
+                                      });
+                                      generateThumbnailUrl();
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: 20.w),
+                                Expanded(
+                                  child: _buildDropdown(
+                                    "Resolution",
+                                    selectedQuality,
+                                    qualityOptions,
+                                    (newValue) {
+                                      setState(() {
+                                        selectedQuality = newValue!;
+                                      });
+                                      generateThumbnailUrl();
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: 20.w),
+                                Expanded(
+                                  child: _buildDropdown(
+                                    "Format",
+                                    selectedFormat,
+                                    formatOptions,
+                                    (newValue) {
+                                      setState(() {
+                                        selectedFormat = newValue!;
+                                      });
+                                      generateThumbnailUrl();
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 if (thumbnailUrl != null) ...[
-                  Image.network(
-                    "https://us-central1-tube-thumbnail.cloudfunctions.net/app/proxy?imagePath=$thumbnailUrl",
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      } else {
-                        return CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                        );
-                      }
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.error,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 30),
                   Container(
+                    margin: const EdgeInsets.only(bottom: 24),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.black87),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 15,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    child: ListTile(
-                      title: SelectableText(thumbnailUrl ?? ""),
-                      trailing: IconButton(
-                        onPressed: () {
-                          Clipboard.setData(
-                                  ClipboardData(text: thumbnailUrl ?? ""))
-                              .then((_) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  thumbnailUrl ?? "",
-                                ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        thumbnailUrl!,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          } else {
+                            return Container(
+                              height: 300,
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                    color: const Color(0xFF3B82F6),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Loading thumbnail...',
+                                    style: TextStyle(
+                                      color: const Color(0xFF64748B),
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
-                          });
+                          }
                         },
-                        icon: const Icon(
-                          Icons.copy,
-                          color: Colors.green,
-                        ),
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 300,
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  size: 60,
+                                  color: Color(0xFFEF4444),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Failed to load thumbnail',
+                                  style: TextStyle(
+                                    color: const Color(0xFFEF4444),
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 15,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Thumbnail URL',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF1E293B),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: SelectableText(
+                                  thumbnailUrl ?? "",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: const Color(0xFF3B82F6),
+                                    fontFamily: 'monospace',
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Clipboard.setData(
+                                          ClipboardData(text: thumbnailUrl ?? ""))
+                                      .then((_) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: const Text('URL copied to clipboard!'),
+                                        backgroundColor: const Color(0xFF10B981),
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                    );
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.copy,
+                                  size: 16,
+                                ),
+                                label: const Text('Copy'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF10B981),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  elevation: 0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -375,5 +636,58 @@ class _HomeScreenState extends State<HomeScreen> {
         format: selectedFormat.id,
       );
     });
+  }
+
+  Widget _buildDropdown(
+    String label,
+    NameID selectedValue,
+    List<NameID> options,
+    Function(NameID?) onChanged,
+  ) {
+    return DropdownButtonFormField<NameID>(
+      isExpanded: true,
+      value: selectedValue,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          color: const Color(0xFF64748B),
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        filled: true,
+        fillColor: const Color(0xFFF8FAFC),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      style: TextStyle(
+        color: const Color(0xFF1E293B),
+        fontSize: 14.sp,
+      ),
+      dropdownColor: Colors.white,
+      items: options.map((option) {
+        return DropdownMenuItem(
+          value: option,
+          child: Text(
+            option.name,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF1E293B),
+            ),
+          ),
+        );
+      }).toList(),
+      onChanged: onChanged,
+    );
   }
 }
