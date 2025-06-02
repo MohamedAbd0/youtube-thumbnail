@@ -36,12 +36,14 @@ Visit the live application: [YouTube Thumbnail Generator](https://mohamedabd0.gi
 ## 📦 Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/MohamedAbd0/youtube-thumbnail.git
    cd youtube-thumbnail
    ```
 
 2. Install dependencies:
+
    ```bash
    flutter pub get
    ```
@@ -53,16 +55,25 @@ Visit the live application: [YouTube Thumbnail Generator](https://mohamedabd0.gi
 
 ## 🚢 Deployment
 
-The app is automatically deployed to GitHub Pages using GitHub Actions when changes are pushed to the main branch.
+Choose between two deployment methods:
 
-### Manual Deployment
+### Option A: GitHub Actions (Recommended)
 
-1. Build for web:
-   ```bash
-   flutter build web --base-href "/youtube-thumbnail/"
-   ```
+Automatic deployment on every push:
 
-2. Deploy the `build/web` folder to your hosting service.
+1. **Repository Settings → Pages**
+2. **Source: "GitHub Actions"**
+3. **Push code:** `git push origin main`
+4. **Live in ~2-3 minutes** ⚡
+
+### Option B: Deploy from /docs folder
+
+Manual deployment control:
+
+1. **Repository Settings → Pages**
+2. **Source: "Deploy from a branch"**
+3. **Branch: main, Folder: /docs**
+4. **Update:** `./deploy.sh && git add docs/ && git commit -m "Update" && git push`
 
 ### GitHub Pages Setup
 

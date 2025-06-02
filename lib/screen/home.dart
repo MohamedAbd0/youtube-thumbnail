@@ -83,11 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFFF8FAFC),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveLayout.isMobile(context) 
-              ? 16.w 
+          horizontal: ResponsiveLayout.isMobile(context)
+              ? 16.w
               : MediaQuery.of(context).size.width * 0.1,
-          vertical: ResponsiveLayout.isMobile(context) 
-              ? 20.h 
+          vertical: ResponsiveLayout.isMobile(context)
+              ? 20.h
               : MediaQuery.of(context).size.width * 0.03,
         ),
         child: Form(
@@ -103,7 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         "YouTube Thumbnail Generator",
                         style: TextStyle(
-                          fontSize: ResponsiveLayout.isMobile(context) ? 28.sp : 42.sp,
+                          fontSize: ResponsiveLayout.isMobile(context)
+                              ? 28.sp
+                              : 42.sp,
                           fontWeight: FontWeight.w800,
                           color: const Color(0xFF1E293B),
                           height: 1.2,
@@ -114,7 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         "Extract high-quality thumbnails from any YouTube video instantly",
                         style: TextStyle(
-                          fontSize: ResponsiveLayout.isMobile(context) ? 16.sp : 18.sp,
+                          fontSize: ResponsiveLayout.isMobile(context)
+                              ? 16.sp
+                              : 18.sp,
                           color: const Color(0xFF64748B),
                           fontWeight: FontWeight.w500,
                         ),
@@ -174,33 +178,37 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             SizedBox(height: 12.h),
-                            ...urlExamples.map((example) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 6,
-                                    height: 6,
-                                    margin: const EdgeInsets.only(top: 8, right: 12),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF3B82F6),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      example,
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: const Color(0xFF3B82F6),
-                                        fontFamily: 'monospace',
+                            ...urlExamples
+                                .map((example) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: 6,
+                                            height: 6,
+                                            margin: const EdgeInsets.only(
+                                                top: 8, right: 12),
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFF3B82F6),
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              example,
+                                              style: TextStyle(
+                                                fontSize: 14.sp,
+                                                color: const Color(0xFF3B82F6),
+                                                fontFamily: 'monospace',
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )).toList(),
+                                    ))
+                                .toList(),
                           ],
                         ),
                       ),
@@ -247,7 +255,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+                        borderSide: const BorderSide(
+                            color: Color(0xFF3B82F6), width: 2),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -437,8 +446,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress.cumulativeBytesLoaded /
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
                                             loadingProgress.expectedTotalBytes!
                                         : null,
                                     color: const Color(0xFF3B82F6),
@@ -532,16 +543,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 12),
                               ElevatedButton.icon(
                                 onPressed: () {
-                                  Clipboard.setData(
-                                          ClipboardData(text: thumbnailUrl ?? ""))
+                                  Clipboard.setData(ClipboardData(
+                                          text: thumbnailUrl ?? ""))
                                       .then((_) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: const Text('URL copied to clipboard!'),
-                                        backgroundColor: const Color(0xFF10B981),
+                                        content: const Text(
+                                            'URL copied to clipboard!'),
+                                        backgroundColor:
+                                            const Color(0xFF10B981),
                                         behavior: SnackBarBehavior.floating,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                       ),
                                     );
@@ -668,7 +682,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         filled: true,
         fillColor: const Color(0xFFF8FAFC),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       style: TextStyle(
         color: const Color(0xFF1E293B),
